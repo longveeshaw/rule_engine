@@ -12,20 +12,20 @@ import groovy.text.GStringTemplateEngine
  */
 class RangeDSL {
     // (1-10]=5,(11-40]=30,(41-100]=90
-    def static parseRangeDSL( rangeExpression,  field,  initValue) {
-        def tempalte = new StringBuffer("def ${field} = ${initValue} \n")
+    def range(rangeExpression, field) {
+        def tempalte = new StringBuffer()
         def ranges = rangeExpression.split(',')
         ranges.each {
             curr ->
                 // (1-10]=5 的解析
-                tempalte.append(RangeDSL.buildBasicTemplate(curr, field))
+                tempalte.append(RangeDSL.createRangeTempate(curr, field))
         }
 
-        tempalte.append("\n").append("return ${field}")
+//        tempalte.append("\n").append("return ${field}")
         tempalte.toString()
     }
 
-    def static buildBasicTemplate(String rangeNode, String field) {
+    static createRangeTempate(String rangeNode, String field) {
         // (1-10]=5
         def expression = rangeNode.split('=')
         def lhs = expression[0]
@@ -33,7 +33,7 @@ class RangeDSL {
         def lessNumber = lhs.substring(1, lhs.indexOf('-'))
         def largeNumber = lhs.substring(lhs.indexOf('-') + 1, lhs.length() - 1)
         def value = expression[1]
-        def f = new File('/Users/monkey/work/ideaWorkSpace/rule_engine/src/template/basicRange.template')
+        def f = new File('/Users/monkey/work/ideaWorkSpace/rule_engine/src/template/range.template')
         def engine = new GStringTemplateEngine()
         def binding = [
                 lessNumber : lessNumber,
@@ -43,6 +43,10 @@ class RangeDSL {
         ]
         def template = engine.createTemplate(f).make(binding)
         template.toString()
+    }
+
+    def a() {
+        println "123"
     }
 
     static void main(String[] args) {
